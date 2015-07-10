@@ -1,0 +1,2 @@
+# BetterEnchants
+Enchants >= Mojang!
