@@ -25,15 +25,26 @@ public class BlazingTouchHandler {
 		}
 		Smeltable smeltable = Smeltable.fromMaterial(b.getType());
 		if (smeltable == null) {
+			if(MiscUtil.shouldDropXp(b.getType())) {
+				Integer xp = new Random().nextInt(10);
+				
+				if(xp > 0) {
+					MiscUtil.dropExpNaturally(b.getLocation(), xp);
+				}
+			}
 			b.breakNaturally();
+			MiscUtil.applyDamage(p, i);
 			return;
 		}
 		if ((level == -1) || (level > EnchantAPI.getRegisteredEnchant("Blazing Touch").getMaxLevel())) {
 			return;
 		}
+		if ((i == null) || (i.getType() == Material.AIR)) {
+			return;
+		}
 		
 		b.setType(Material.AIR);
-		MiscUtil.applyDamage(i);
+		MiscUtil.applyDamage(p, i);
 		
 		if(i.containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS)) {
 			if(i.getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS) >= 2) {

@@ -9,16 +9,17 @@ import org.bukkit.enchantments.Enchantment;
 public class CustomEnchant {
 	
 	private String name;
-	private Integer maxlevel;
+	private Integer maxlevel, baseXpLevel;
 	private List<String> enchantables;
 	private List<String> conflicts, vanillaconflicts;
 	
-	public CustomEnchant(String name, Integer maxLevel, String enchantableItems, String vanillaConflicts, String betterConflicts) {
+	public CustomEnchant(String name, Integer maxLevel, String enchantableItems, String vanillaConflicts, String betterConflicts, int baseXpLevel) {
 		this.name = name;
 		this.maxlevel = maxLevel;
 		this.enchantables = Arrays.asList(enchantableItems.split(" "));
 		this.conflicts = Arrays.asList(betterConflicts.split(" "));
 		this.vanillaconflicts = Arrays.asList(vanillaConflicts.split(" "));
+		this.baseXpLevel = baseXpLevel;
 	}
 	
 	public String getName() {
@@ -56,6 +57,10 @@ public class CustomEnchant {
 			}
 		}
 		return false;
+	}
+	
+	public int getBaseXpLevel() {
+		return this.baseXpLevel;
 	}
 
 }

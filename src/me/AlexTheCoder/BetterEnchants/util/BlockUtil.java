@@ -75,5 +75,33 @@ public class BlockUtil {
 		
 		return blocks;
 	}
+	
+	public static List<Block> getSquare(Block b, BlockFace face, int infusionLevel) {
+		List<Block> blocks = new ArrayList<Block>();
+		switch(face){
+		case DOWN:
+			blocks.addAll(getBlocks(b.getLocation(), infusionLevel, 0, infusionLevel));//1
+			break;
+		case EAST:
+			blocks.addAll(getBlocks(b.getLocation(), 0, infusionLevel, infusionLevel));
+			break;
+		case NORTH:
+			blocks.addAll(getBlocks(b.getLocation(), infusionLevel, infusionLevel, 0));
+			break;
+		case SOUTH:
+			blocks.addAll(getBlocks(b.getLocation(), infusionLevel, infusionLevel, 0));
+			break;
+		case UP:
+			blocks.addAll(getBlocks(b.getLocation(), infusionLevel, 0, infusionLevel));
+			break;
+		case WEST:
+			blocks.addAll(getBlocks(b.getLocation(), 0, infusionLevel, infusionLevel));
+			break;
+		default:
+			break;
+		}
+		
+		return blocks;
+	}
 
 }

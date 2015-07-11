@@ -35,6 +35,7 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class EnchantListener implements Listener{
@@ -219,6 +220,15 @@ public class EnchantListener implements Listener{
 	public void onHit(ProjectileHitEvent event) {
 		poison.remove(event.getEntity().getEntityId());
 		frostbite.remove(event.getEntity().getEntityId());
+	}
+	
+	@EventHandler(ignoreCancelled = true)
+	public void onTagBlockFace(PlayerInteractEvent event) {
+		if(event.getPlayer() == null) return;
+		if(event.getBlockFace() == null) return;
+		if((event.getItem() == null) || (event.getMaterial() == Material.AIR)) return;
+		if(!EnchantUtil.hasEnchant(event.getItem(), "Infusion")) return;
+		InfusionHandler.updateSavedBlockFace(event.getPlayer(), event.getBlockFace());
 	}
 	
 

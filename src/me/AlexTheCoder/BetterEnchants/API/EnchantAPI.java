@@ -15,7 +15,7 @@ public class EnchantAPI {
 	public static void initialize(Main plugin) {
 		registeredEnchants = new ConcurrentHashMap<CustomEnchant, EnchantType>();
 		for(StockEnchant e : StockEnchant.values()) {
-			registeredEnchants.put(new CustomEnchant(e.getName(), e.getMaxLevel(), e.getEnchantableItems(), e.getVanillaConflicts(), e.getBetterConflicts()), EnchantType.STOCK);
+			registeredEnchants.put(new CustomEnchant(e.getName(), e.getMaxLevel(), e.getEnchantableItems(), e.getVanillaConflicts(), e.getBetterConflicts(), e.getBaseXpCost()), EnchantType.STOCK);
 		}
 		registeredArmorBuffs = new ConcurrentHashMap<CustomArmorBuff, EnchantType>();
 		for(StockArmorBuff e : StockArmorBuff.values()) {

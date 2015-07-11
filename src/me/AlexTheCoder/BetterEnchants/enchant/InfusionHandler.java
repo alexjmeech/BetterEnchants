@@ -2,21 +2,25 @@ package me.AlexTheCoder.BetterEnchants.enchant;
 
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import me.AlexTheCoder.BetterEnchants.API.EnchantAPI;
 import me.AlexTheCoder.BetterEnchants.util.BlockUtil;
 import me.AlexTheCoder.BetterEnchants.util.EnchantUtil;
 import me.AlexTheCoder.BetterEnchants.util.MiscUtil;
-import me.AlexTheCoder.BetterEnchants.util.YawUtil;
 
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class InfusionHandler {
+	
+	private static ConcurrentHashMap<UUID, BlockFace> loggedBlockFaces = new ConcurrentHashMap<UUID, BlockFace>();
 	
 	public InfusionHandler(Player p, BlockBreakEvent e, int level, ItemStack i, boolean blazingTouch) {
 		if (p.getGameMode().equals(GameMode.CREATIVE)) {
@@ -27,39 +31,56 @@ public class InfusionHandler {
 			return;
 		}
 		
-		List<Block> blocks = BlockUtil.getSquare(e.getBlock(), YawUtil.yawToDirection(p.getLocation().getYaw(), true));
-		if(blazingTouch) e.setCancelled(true);
+		List<Block> blocks = BlockUtil.getSquare(e.getBlock(), loggedBlockFaces.get(p.getUniqueId()), level);
+		Material oldMaterial = e.getBlock().getType();
 		
 		if(blocks.isEmpty()) {
 			if(blazingTouch) {
 				new BlazingTouchHandler(p, e.getBlock(), EnchantUtil.getLevel(i, "Blazing Touch"), i);
-				e.setCancelled(true);
+				if((e.getBlock() == null) || (e.getBlock().getType() == Material.AIR))e.setCancelled(true);
 			} else {
+				handleNormalFunctions(p, i, e.getBlock());
 				e.getBlock().breakNaturally();
 			}
 		}else{
 			for(Block b : blocks) {
 				if(b != null) {
-					if(!b.getType().equals(Material.AIR) && !b.getType().equals(Material.BEDROCK) && !b.getType().equals(Material.STATIONARY_LAVA) && !b.getType().equals(Material.STATIONARY_WATER) && !b.getType().equals(Material.WATER) && !b.getType().equals(Material.LAVA)) {
+					if(!b.getType().equals(Material.AIR) && !b.getType().equals(Material.BEDROCK) && !b.getType().equals(Material.STATIONARY_LAVA) && !b.getType().equals(Material.STATIONARY_WATER) && !b.getType().equals(Material.WATER) && !b.getType().equals(Material.LAVA) && areSame(oldMaterial, b.getType())) {
 						if(blazingTouch) {
 							new BlazingTouchHandler(p, b, EnchantUtil.getLevel(i, "Blazing Touch"), i);
-							e.setCancelled(true);
+							if((b == null) || (b.getType() == Material.AIR))e.setCancelled(true);
 						} else {
+							handleNormalFunctions(p, i, b);
 							b.breakNaturally();
 						}
 					}
 				}
 			}
+			blocks.clear();
+			blocks = null;
 		}
+	}
+	
+	private static void handleNormalFunctions(Player p, ItemStack item, Block b) {
+		MiscUtil.applyDamage(p, item);
 		
-		MiscUtil.applyDamage(i);
-		
-		Integer xp = new Random().nextInt(10);
-		
-		if(xp > 0) {
-			MiscUtil.dropExpNaturally(e.getBlock().getLocation(), xp);
+		if(MiscUtil.shouldDropXp(b.getType())) {
+			Integer xp = new Random().nextInt(10);
+			
+			if(xp > 0) {
+				MiscUtil.dropExpNaturally(b.getLocation(), xp);
+			}
 		}
-		
+	}
+	
+	private static boolean areSame(Material one, Material two) {
+		if(one == Material.AIR) return true;
+		if(two == Material.AIR) return true;
+		return one.ordinal() == two.ordinal();
+	}
+	
+	public static void updateSavedBlockFace(Player p, BlockFace b) {
+		loggedBlockFaces.put(p.getUniqueId(), b);
 	}
 
 }
