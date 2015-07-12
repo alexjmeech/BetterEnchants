@@ -8,7 +8,7 @@ public enum StockEnchant {
 	DECAPITATION("Decapitation", "_SWORD _AXE", "LOOT_BONUS_MOBS", "", 3, 10),
 	FROSTBITE("Frostbite", "BOW", "ARROW_FIRE", "POISON", 3, 10),
 	HIGHLANDER("Highlander", "_HELMET _CHESTPLATE _LEGGINGS _BOOTS", "", "", 3, 10),
-	INFECTED_BLADE("Infected Blade", "_SWORD _AXE", "", "", 3, 10),
+	//INFECTED_BLADE("Infected Blade", "_SWORD _AXE", "", "", 3, 10),
 	INFUSION("Infusion", "_PICKAXE _SPADE", "SILK_TOUCH", "", 3, 10),
 	LIFESTEAL("Lifesteal", "_SWORD _AXE", "", "", 3, 10),
 	MEDITATION("Meditation", "_HELMET _CHESTPLATE _LEGGINGS _BOOTS", "", "", 3, 10),

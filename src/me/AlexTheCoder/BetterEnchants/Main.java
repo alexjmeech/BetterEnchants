@@ -30,6 +30,7 @@ public class Main extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new CrystalEnchantListener(), this);
 		getServer().getPluginManager().registerEvents(new AuthorCreditListener(), this);
 		getServer().getPluginManager().registerEvents(new StarEnchantListener(), this);
+		getServer().getScheduler().scheduleSyncRepeatingTask(this, new ArmorEffectListener(), 0, 15);
 	}
 	
 	@Override

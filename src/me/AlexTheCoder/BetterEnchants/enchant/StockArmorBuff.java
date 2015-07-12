@@ -20,6 +20,7 @@ public enum StockArmorBuff {
 		this.enchant = enchant;
 		this.piecesNeeded = piecesNeeded;
 		this.effect = effect;
+		this.disable = disableInCombat;
 	}
 	
 	public CustomEnchant getEnchant() {

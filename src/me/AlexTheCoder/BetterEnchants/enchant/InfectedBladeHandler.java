@@ -14,6 +14,14 @@ public class InfectedBladeHandler {
 	
 	public InfectedBladeHandler(Player p, LivingEntity target, int level) {
 		if(MiscUtil.willOccur(2.5 * level)) {
+			int time = 5 * 20;
+			int amplifier = level - 1;
+			
+			if(level > 2) {
+				time = time + (level * 20);
+				amplifier = 1;
+			}
+			
 			if (p.getGameMode().equals(GameMode.CREATIVE)) {
 				return;
 			}
@@ -24,12 +32,12 @@ public class InfectedBladeHandler {
 				Player t = (Player)target;
 				int antitoxinLevel = EnchantUtil.getHighestLevelofArmorEnchant(t.getInventory().getArmorContents(), EnchantAPI.getRegisteredEnchant("Antitoxin"));
 				if(antitoxinLevel > 0) {
-					t.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, AntitoxinHandler.getNewDuration(5 * 20, antitoxinLevel), level - 1));
+					t.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, AntitoxinHandler.getNewDuration(time, antitoxinLevel), amplifier));
 				}else{
-					t.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 5 * 20, level - 1));
+					t.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, time, amplifier));
 				}
 			}else{
-				target.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 5 * 20, level - 1));
+				target.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, time, amplifier));
 			}
 		}
 	}

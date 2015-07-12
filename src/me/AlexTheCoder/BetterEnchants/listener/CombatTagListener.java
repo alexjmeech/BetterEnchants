@@ -5,13 +5,10 @@ import java.util.Set;
 import me.AlexTheCoder.BetterEnchants.util.CombatTagUtil;
 
 import org.bukkit.GameMode;
-import org.bukkit.entity.AnimalTamer;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
-import org.bukkit.entity.Tameable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -30,59 +27,33 @@ public class CombatTagListener implements Listener {
 	public void tagPlayer(EntityDamageByEntityEvent event) {
 		Entity victimEntity = event.getEntity();
 		Entity attackerEntity = event.getDamager();
-		Player victim;
-		if ((victimEntity instanceof Tameable)) {
-			AnimalTamer owner = ((Tameable)victimEntity).getOwner();
-			if (!(owner instanceof Player)) {
-				return;
-			}
-			victim = (Player)owner;
-		} else {
-			if ((victimEntity instanceof Player)) {
-				victim = (Player)victimEntity;
-			} else {
-				return;
+		Player victim = null;
+		Player attacker = null;
+		if(victimEntity instanceof Player) {
+			victim = (Player)victimEntity;
+			if((victim.getGameMode() != GameMode.SURVIVAL) && (victim.getGameMode() != GameMode.ADVENTURE)) {
+				victim = null;
 			}
 		}
-		if ((victim.getGameMode() == GameMode.CREATIVE)) {
-			victim = null;
-		}
-		Player attacker;
-		if (((attackerEntity instanceof LivingEntity))) {
-			attacker = null;
-		} else {
-			if ((attackerEntity instanceof Projectile)) {
-				Projectile p = (Projectile)attackerEntity;
-				ProjectileSource source = p.getShooter();
-				if (!(source instanceof Player)) {
-					return;
-				}
-				if ((p.getType() == EntityType.ENDER_PEARL) && (victim == source)) {
-					return;
-				}
-				attacker = (Player)source;
-			} else {
-				if ((attackerEntity instanceof Tameable)) {
-					AnimalTamer owner = ((Tameable)attackerEntity).getOwner();
-					if (!(owner instanceof Player)) {
-						return;
-					}
-					attacker = (Player)owner;
-				} else if ((attackerEntity instanceof Player)) {
-					attacker = (Player)attackerEntity;
-					if ((attacker.getGameMode() == GameMode.CREATIVE)) {
-						attacker = null;
-					}
-				} else {
-					return;
-				}
+		if(attackerEntity instanceof Player) {
+			attacker = (Player)attackerEntity;
+			if((attacker.getGameMode() != GameMode.SURVIVAL) && (attacker.getGameMode() != GameMode.ADVENTURE)) {
+				attacker = null;
 			}
 		}
-		if (victim == attacker) {
-			return;
+		if(attackerEntity instanceof Projectile) {
+			Projectile p = (Projectile)attackerEntity;
+			if(p.getShooter() instanceof Player) {
+				attacker = (Player)p.getShooter();
+				if(attacker.getEntityId() == victimEntity.getEntityId()) attacker = null;
+			}
 		}
-		CombatTagUtil.updateCombatTime(attacker);
-		CombatTagUtil.updateCombatTime(victim);
+		if(attacker != null) {
+			CombatTagUtil.updateCombatTime(attacker);
+		}
+		if(victim != null) {
+			CombatTagUtil.updateCombatTime(victim);
+		}
 	}
 	
 	@EventHandler(ignoreCancelled=true)

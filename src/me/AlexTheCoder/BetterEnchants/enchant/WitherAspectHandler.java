@@ -22,11 +22,11 @@ public class WitherAspectHandler {
 			}
 			if(target instanceof Player) {
 				Player t = (Player)target;
-				int antitoxinLevel = EnchantUtil.getHighestLevelofArmorEnchant(p.getInventory().getArmorContents(), EnchantAPI.getRegisteredEnchant("Antitoxin"));
+				int antitoxinLevel = EnchantUtil.getHighestLevelofArmorEnchant(t.getInventory().getArmorContents(), EnchantAPI.getRegisteredEnchant("Antitoxin"));
 				if(antitoxinLevel > 0) {
-					t.addPotionEffect(new PotionEffect(PotionEffectType.POISON, AntitoxinHandler.getNewDuration((1 + level) * 20, antitoxinLevel), 1));
+					t.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, AntitoxinHandler.getNewDuration((1 + level) * 20, antitoxinLevel), 1));
 				}else{
-					t.addPotionEffect(new PotionEffect(PotionEffectType.POISON, (1 + level) * 20, 1));
+					t.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, (1 + level) * 20, 1));
 				}
 			}else{
 				target.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, (1 + level) * 20, 1));

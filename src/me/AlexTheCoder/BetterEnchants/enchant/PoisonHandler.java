@@ -11,16 +11,24 @@ import org.bukkit.potion.PotionEffectType;
 public class PoisonHandler {
 	
 	public PoisonHandler(LivingEntity damaged, int level) {
+		int time = 5 * 20;
+		int amplifier = level - 1;
+		
+		if(level > 2) {
+			time = time + (level * 20);
+			amplifier = 1;
+		}
+		
 		if(damaged instanceof Player) {
 			Player p = (Player)damaged;
 			int antitoxinLevel = EnchantUtil.getHighestLevelofArmorEnchant(p.getInventory().getArmorContents(), EnchantAPI.getRegisteredEnchant("Antitoxin"));
 			if(antitoxinLevel > 0) {
-				damaged.addPotionEffect(new PotionEffect(PotionEffectType.POISON, AntitoxinHandler.getNewDuration(5 * 20, antitoxinLevel), level - 1));
+				damaged.addPotionEffect(new PotionEffect(PotionEffectType.POISON, AntitoxinHandler.getNewDuration(time, antitoxinLevel), amplifier));
 			}else{
-				damaged.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 5 * 20, level - 1));
+				damaged.addPotionEffect(new PotionEffect(PotionEffectType.POISON, time, amplifier));
 			}
 		}else{
-			damaged.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 5 * 20, level - 1));
+			damaged.addPotionEffect(new PotionEffect(PotionEffectType.POISON, time, amplifier));
 		}
 	}
 

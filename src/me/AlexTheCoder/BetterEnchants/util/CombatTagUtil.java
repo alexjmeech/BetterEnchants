@@ -3,6 +3,8 @@ package me.AlexTheCoder.BetterEnchants.util;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import me.AlexTheCoder.BetterEnchants.listener.ArmorEffectListener;
+
 import org.bukkit.entity.Player;
 
 public class CombatTagUtil {
@@ -11,6 +13,7 @@ public class CombatTagUtil {
 	
 	public static void updateCombatTime(Player p) {
 		lastCombatTime.put(p.getUniqueId(), System.currentTimeMillis());
+		ArmorEffectListener.updateBuffs(p);
 	}
 	
 	public static void removePlayer(Player p) {
@@ -21,6 +24,7 @@ public class CombatTagUtil {
 		if(!lastCombatTime.containsKey(p.getUniqueId())) return false;
 		Long difference = System.currentTimeMillis() - lastCombatTime.get(p.getUniqueId());
 		if(difference <= (duration * 1000)) return true;
+		System.out.println(difference <= (duration * 1000));
 		return false;
 	}
 

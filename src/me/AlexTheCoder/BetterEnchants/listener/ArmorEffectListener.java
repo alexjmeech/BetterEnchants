@@ -14,7 +14,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
@@ -23,7 +22,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
-public class ArmorEffectListener implements Listener {
+public class ArmorEffectListener implements Listener, Runnable {
 	
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void onLoadArmorBuffs(PlayerJoinEvent event) {
@@ -57,13 +56,12 @@ public class ArmorEffectListener implements Listener {
 		updateBuffs(event.getPlayer());
 	}
 	
-	@EventHandler(ignoreCancelled = true)
-	public void onAdjustArmorBuffs(EntityDamageEvent event) {
-		if(!(event.getEntity() instanceof Player)) {
-			return;
+
+	@Override
+	public void run() {
+		for(Player p : Bukkit.getOnlinePlayers()) {
+			updateBuffs(p);
 		}
-		Player p = (Player)event.getEntity();
-		updateBuffs(p);
 	}
 	
 	public static void updateBuffs(Player player) {
@@ -72,7 +70,7 @@ public class ArmorEffectListener implements Listener {
 			public void run() {
 				for (CustomArmorBuff buff : EnchantAPI.getRegisteredArmorBuffs()) {
 					if(buff.getDisableInCombat()) {
-						if(!CombatTagUtil.hasBeenInCombat(p, 30.0)) {
+						if(!CombatTagUtil.hasBeenInCombat(p, 15.0)) {
 							if (hasArmorEnchant(p.getInventory().getArmorContents(), buff.getEnchant(), buff.getPiecesNeeded())) {
 								p.addPotionEffect(new PotionEffect(buff.getEffect(), 2147483647, EnchantUtil.getHighestLevelofArmorEnchant(p.getInventory().getArmorContents(), buff.getEnchant()) - 1), true);
 							} else if (p.hasPotionEffect(buff.getEffect())) {

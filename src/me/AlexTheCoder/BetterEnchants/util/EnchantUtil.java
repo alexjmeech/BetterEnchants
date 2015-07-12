@@ -117,7 +117,8 @@ public class EnchantUtil {
 	
 	public static int getHighestLevelofArmorEnchant(ItemStack[] armor, CustomEnchant enchant) {
 		int level = 0;
-		ItemStack[] armors = armor;int amount = armor.length;
+		ItemStack[] armors = armor;
+		int amount = armor.length;
 		for (int i = 0; i < amount; i++) {
 			ItemStack itm = armors[i];
 			if(EnchantUtil.getLevel(itm, enchant.getName()) > level)

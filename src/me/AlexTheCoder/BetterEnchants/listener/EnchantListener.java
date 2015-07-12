@@ -2,6 +2,7 @@ package me.AlexTheCoder.BetterEnchants.listener;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import me.AlexTheCoder.BetterEnchants.Main;
 import me.AlexTheCoder.BetterEnchants.API.CustomEnchant;
 import me.AlexTheCoder.BetterEnchants.API.EnchantAPI;
 import me.AlexTheCoder.BetterEnchants.enchant.AntitoxinHandler;
@@ -9,7 +10,6 @@ import me.AlexTheCoder.BetterEnchants.enchant.BlazingTouchHandler;
 import me.AlexTheCoder.BetterEnchants.enchant.CranialStrikeHandler;
 import me.AlexTheCoder.BetterEnchants.enchant.DecapitationHandler;
 import me.AlexTheCoder.BetterEnchants.enchant.FrostbiteHandler;
-import me.AlexTheCoder.BetterEnchants.enchant.InfectedBladeHandler;
 import me.AlexTheCoder.BetterEnchants.enchant.InfusionHandler;
 import me.AlexTheCoder.BetterEnchants.enchant.LifestealHandler;
 import me.AlexTheCoder.BetterEnchants.enchant.MultishotHandler;
@@ -20,6 +20,7 @@ import me.AlexTheCoder.BetterEnchants.enchant.StaggeringBlowHandler;
 import me.AlexTheCoder.BetterEnchants.enchant.WitherAspectHandler;
 import me.AlexTheCoder.BetterEnchants.util.EnchantUtil;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
@@ -88,27 +89,27 @@ public class EnchantListener implements Listener{
 	public void onCombat(EntityDamageByEntityEvent event) {
 		if(event.getDamager() instanceof Player) {
 			Player p = (Player)event.getDamager();
-			if(p.getItemInHand() == null) return;
-			if(p.getItemInHand().getType() == Material.AIR) return;
-			ItemStack i = p.getItemInHand();
-			for(CustomEnchant enchant : EnchantUtil.getEnchants(i)) {
-				if(enchant.getName().equalsIgnoreCase("Cranial Strike") && (EnchantUtil.getLevel(i, "Cranial Strike") > 0)) {
-					new CranialStrikeHandler(p, (LivingEntity)event.getEntity(), EnchantUtil.getLevel(i, "Cranial Strike"));
-				}
-				if(enchant.getName().equalsIgnoreCase("Infected Blade") && (EnchantUtil.getLevel(i, "Infected Blade") > 0)) {
-					new InfectedBladeHandler(p, (LivingEntity)event.getEntity(), EnchantUtil.getLevel(i, "Infected Blade"));
-				}
-				if(enchant.getName().equalsIgnoreCase("Lifesteal") && (EnchantUtil.getLevel(i, "Lifesteal") > 0)) {
-					new LifestealHandler(p, EnchantUtil.getLevel(i, "Lifesteal"), event.getDamage());
-				}
-				if(enchant.getName().equalsIgnoreCase("Paralyze") && (EnchantUtil.getLevel(i, "Paralyze") > 0)) {
-					new ParalyzeHandler(p, EnchantUtil.getLevel(i, "Paralyze"), (LivingEntity)event.getEntity());
-				}
-				if(enchant.getName().equalsIgnoreCase("Staggering Blow") && (EnchantUtil.getLevel(i, "Staggering Blow") > 0)) {
-					new StaggeringBlowHandler(p, EnchantUtil.getLevel(i, "Staggering Blow"), (LivingEntity)event.getEntity());
-				}
-				if(enchant.getName().equalsIgnoreCase("Wither Aspect") && (EnchantUtil.getLevel(i, "Wither Aspect") > 0)) {
-					new WitherAspectHandler(p, EnchantUtil.getLevel(i, "Wither Aspect"), (LivingEntity)event.getEntity());
+			if((p.getItemInHand() != null) && (p.getItemInHand().getType() != Material.AIR)) {
+				ItemStack i = p.getItemInHand();
+				for(CustomEnchant enchant : EnchantUtil.getEnchants(i)) {
+					if(enchant.getName().equalsIgnoreCase("Cranial Strike") && (EnchantUtil.getLevel(i, "Cranial Strike") > 0)) {
+						new CranialStrikeHandler(p, (LivingEntity)event.getEntity(), EnchantUtil.getLevel(i, "Cranial Strike"));
+					}
+					/*if(enchant.getName().equalsIgnoreCase("Infected Blade") && (EnchantUtil.getLevel(i, "Infected Blade") > 0)) {
+						new InfectedBladeHandler(p, (LivingEntity)event.getEntity(), EnchantUtil.getLevel(i, "Infected Blade"));
+					}*/
+					if(enchant.getName().equalsIgnoreCase("Lifesteal") && (EnchantUtil.getLevel(i, "Lifesteal") > 0)) {
+						new LifestealHandler(p, EnchantUtil.getLevel(i, "Lifesteal"), event.getDamage());
+					}
+					if(enchant.getName().equalsIgnoreCase("Paralyze") && (EnchantUtil.getLevel(i, "Paralyze") > 0)) {
+						new ParalyzeHandler(p, EnchantUtil.getLevel(i, "Paralyze"), (LivingEntity)event.getEntity());
+					}
+					if(enchant.getName().equalsIgnoreCase("Staggering Blow") && (EnchantUtil.getLevel(i, "Staggering Blow") > 0)) {
+						new StaggeringBlowHandler(p, EnchantUtil.getLevel(i, "Staggering Blow"), (LivingEntity)event.getEntity());
+					}
+					if(enchant.getName().equalsIgnoreCase("Wither Aspect") && (EnchantUtil.getLevel(i, "Wither Aspect") > 0)) {
+						new WitherAspectHandler(p, EnchantUtil.getLevel(i, "Wither Aspect"), (LivingEntity)event.getEntity());
+					}
 				}
 			}
 		}
@@ -218,8 +219,13 @@ public class EnchantListener implements Listener{
 	
 	@EventHandler(priority=EventPriority.LOWEST, ignoreCancelled = true)
 	public void onHit(ProjectileHitEvent event) {
-		poison.remove(event.getEntity().getEntityId());
-		frostbite.remove(event.getEntity().getEntityId());
+		final int entityId = event.getEntity().getEntityId();
+		Bukkit.getScheduler().scheduleSyncDelayedTask(Main.instance, new Runnable() {
+			public void run() {
+				poison.remove(entityId);
+				frostbite.remove(entityId);
+			}
+		});
 	}
 	
 	@EventHandler(ignoreCancelled = true)
