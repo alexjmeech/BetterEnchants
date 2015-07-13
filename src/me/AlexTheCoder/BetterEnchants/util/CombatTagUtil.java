@@ -24,7 +24,6 @@ public class CombatTagUtil {
 		if(!lastCombatTime.containsKey(p.getUniqueId())) return false;
 		Long difference = System.currentTimeMillis() - lastCombatTime.get(p.getUniqueId());
 		if(difference <= (duration * 1000)) return true;
-		System.out.println(difference <= (duration * 1000));
 		return false;
 	}
 

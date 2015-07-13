@@ -1,4 +1,14 @@
 name: BetterEnchants
 author: AlexTheCoder
-version: 2.5
+version: 2.6
 main: me.AlexTheCoder.BetterEnchants.Main
+commands:
+  betterenchants:
+    aliases: [be]
+    usage: /<command>
+  addenchant:
+    usage: /<command> <EnchantName> <Level>
+  getcrystal:
+    usage: /<command> <EnchantName> <Level>
+  givecrystal:
+    usage: /<command> <EnchantName> <Level> <Player>
