@@ -24,6 +24,8 @@ public class Main extends JavaPlugin {
 	
 	public static Main instance;
 	
+	public static boolean projectKorra = false;
+	
 	@Override
 	public void onEnable() {
 		instance = this;
@@ -38,6 +40,7 @@ public class Main extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new AuthorCreditListener(), this);
 		getServer().getPluginManager().registerEvents(new StarEnchantListener(), this);
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new ArmorEffectListener(), 0, 15);
+		if(getServer().getPluginManager().isPluginEnabled("ProjectKorra")) projectKorra = true;
 	}
 	
 	@Override

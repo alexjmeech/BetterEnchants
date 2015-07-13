@@ -21,6 +21,10 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+
+import com.projectkorra.ProjectKorra.earthbending.EarthArmor;
+import com.projectkorra.ProjectKorra.waterbending.PlantArmor;
 
 public class ArmorEffectListener implements Listener, Runnable {
 	
@@ -76,7 +80,11 @@ public class ArmorEffectListener implements Listener, Runnable {
 							} else if (p.hasPotionEffect(buff.getEffect())) {
 								for (PotionEffect effect : p.getActivePotionEffects()) {
 									if ((effect.getType().equals(buff.getEffect())) && (effect.getDuration() > 9600)) {
-										p.removePotionEffect(buff.getEffect());
+										if((effect.getType() == PotionEffectType.DAMAGE_RESISTANCE) && Main.projectKorra) {
+											if(!PlantArmor.instances.containsKey(p) && !EarthArmor.instances.containsKey(p))
+												p.removePotionEffect(buff.getEffect());
+										}else
+											p.removePotionEffect(buff.getEffect());
 										break;
 									}
 								}
