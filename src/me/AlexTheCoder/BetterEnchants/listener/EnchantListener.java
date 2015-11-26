@@ -46,7 +46,7 @@ public class EnchantListener implements Listener{
 	
 	@EventHandler(ignoreCancelled = true)
 	public void onPotionSplash(PotionSplashEvent e) {
-		for(LivingEntity entity : e.getAffectedEntities()) {
+		for(LivingEntity entity : e.getAffectedEntities()) {			
 			if(entity instanceof Player) {
 				Player p = (Player)entity;
 				boolean hasAntitoxin = false;
@@ -63,7 +63,7 @@ public class EnchantListener implements Listener{
 	}
 	
 	@EventHandler(ignoreCancelled = true)
-	public void onMine(BlockBreakEvent e) {
+	public void onMine(BlockBreakEvent e) {		
 		if((e.getPlayer().getItemInHand() != null) && (e.getPlayer().getItemInHand().getType() != Material.AIR)) {
 			Player p = e.getPlayer();
 			ItemStack i = p.getItemInHand();
@@ -138,18 +138,16 @@ public class EnchantListener implements Listener{
 	
 	@EventHandler
 	public void onPlayerDie(PlayerDeathEvent e) {
-		if(e.getEntity() instanceof Player) {
-			Player dead = (Player)e.getEntity();
-			if(dead.getKiller() != null) {
-				if(dead.getKiller() instanceof Player) {
-					Player p = (Player)dead.getKiller();
-					if(p.getItemInHand() == null) return;
-					if(p.getItemInHand().getType() == Material.AIR) return;
-					ItemStack i = p.getItemInHand();
-					for(CustomEnchant enchant : EnchantUtil.getEnchants(i)) {
-						if(enchant.getName().equalsIgnoreCase("Decapitation") && (EnchantUtil.getLevel(i, "Decapitation") > 0)) {
-							new DecapitationHandler(p, dead, e, EnchantUtil.getLevel(i, "Decapitation"));
-						}
+		Player dead = e.getEntity();
+		if(dead.getKiller() != null) {
+			if(dead.getKiller() instanceof Player) {
+				Player p = (Player)dead.getKiller();
+				if(p.getItemInHand() == null) return;
+				if(p.getItemInHand().getType() == Material.AIR) return;
+				ItemStack i = p.getItemInHand();
+				for(CustomEnchant enchant : EnchantUtil.getEnchants(i)) {
+					if(enchant.getName().equalsIgnoreCase("Decapitation") && (EnchantUtil.getLevel(i, "Decapitation") > 0)) {
+						new DecapitationHandler(p, dead, e, EnchantUtil.getLevel(i, "Decapitation"));
 					}
 				}
 			}

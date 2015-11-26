@@ -23,8 +23,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import com.projectkorra.ProjectKorra.earthbending.EarthArmor;
-import com.projectkorra.ProjectKorra.waterbending.PlantArmor;
+import com.projectkorra.projectkorra.earthbending.EarthArmor;
+import com.projectkorra.projectkorra.waterbending.PlantArmor;
 
 public class ArmorEffectListener implements Listener, Runnable {
 	

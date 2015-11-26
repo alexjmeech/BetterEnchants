@@ -18,6 +18,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
+import com.sk89q.worldguard.bukkit.WGBukkit;
+
 public class InfusionHandler {
 	
 	private static ConcurrentHashMap<UUID, BlockFace> loggedBlockFaces = new ConcurrentHashMap<UUID, BlockFace>();
@@ -45,6 +47,9 @@ public class InfusionHandler {
 		}else{
 			for(Block b : blocks) {
 				if(b != null) {
+					if (!WGBukkit.getPlugin().canBuild(p, b))
+						continue;
+					
 					if(!b.getType().equals(Material.AIR) && !b.getType().equals(Material.BEDROCK) && !b.getType().equals(Material.STATIONARY_LAVA) && !b.getType().equals(Material.STATIONARY_WATER) && !b.getType().equals(Material.WATER) && !b.getType().equals(Material.LAVA) && areSame(oldMaterial, b.getType())) {
 						if(blazingTouch) {
 							new BlazingTouchHandler(p, b, EnchantUtil.getLevel(i, "Blazing Touch"), i);
