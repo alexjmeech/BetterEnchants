@@ -1,6 +1,6 @@
 name: BetterEnchants
 author: AlexTheCoder
-version: 2.8
+version: 2.9
 main: me.AlexTheCoder.BetterEnchants.Main
 softdepend: [ProjectKorra, WorldGuard]
 commands:
