@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import me.AlexTheCoder.BetterEnchants.API.CustomEnchant;
+import me.AlexTheCoder.BetterEnchants.config.HandleActive;
 import me.AlexTheCoder.BetterEnchants.util.CrystalUtil;
 import me.AlexTheCoder.BetterEnchants.util.EnchantUtil;
 
@@ -67,8 +68,11 @@ public class CrystalEnchantListener implements Listener {
 		}
 		if (menu.total == 0) {
 			event.getPlayer().sendMessage(ChatColor.RED + "You have no items in your inventory that can be enchanted with this crystal!");
-		} else if (event.getPlayer().getLevel() < 20) {
-			event.getPlayer().sendMessage(ChatColor.RED + "You require 20 levels to enchant an item with a crystal!");
+		} else if (event.getPlayer().getLevel() < HandleActive.getInstance().getCrystalXpLevelCost()) {
+			if (HandleActive.getInstance().getCrystalXpLevelCost() != 1)
+				event.getPlayer().sendMessage(ChatColor.RED + "You require " + HandleActive.getInstance().getCrystalXpLevelCost() + " levels to enchant an item with a crystal!");
+			else
+				event.getPlayer().sendMessage(ChatColor.RED + "You require " + HandleActive.getInstance().getCrystalXpLevelCost() + " level to enchant an item with a crystal!");
 		} else {
 			menu.show(event.getPlayer());
 			instances.put(event.getPlayer(), menu);

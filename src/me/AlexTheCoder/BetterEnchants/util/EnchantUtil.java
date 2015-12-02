@@ -121,8 +121,7 @@ public class EnchantUtil {
 		int amount = armor.length;
 		for (int i = 0; i < amount; i++) {
 			ItemStack itm = armors[i];
-			if(EnchantUtil.getLevel(itm, enchant.getName()) > level)
-				level = EnchantUtil.getLevel(itm, enchant.getName());
+			level = Math.max(EnchantUtil.getLevel(itm, enchant.getName()), level);
 		}
 		return level;
 	}

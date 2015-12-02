@@ -2,6 +2,7 @@ package me.AlexTheCoder.BetterEnchants;
 
 import me.AlexTheCoder.BetterEnchants.API.CrystalAPI;
 import me.AlexTheCoder.BetterEnchants.API.EnchantAPI;
+import me.AlexTheCoder.BetterEnchants.config.HandleActive;
 import me.AlexTheCoder.BetterEnchants.crystal.CrystalEnchantListener;
 import me.AlexTheCoder.BetterEnchants.listener.ArmorEffectListener;
 import me.AlexTheCoder.BetterEnchants.listener.AuthorCreditListener;
@@ -30,6 +31,7 @@ public class Main extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		instance = this;
+		HandleActive.getInstance().onPluginEnable(getConfig());
 		EnchantAPI.initialize(this);
 		EnchantGlow.init();
 		BetterEnchantsCommand.init(this);

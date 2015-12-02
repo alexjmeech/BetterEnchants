@@ -204,7 +204,7 @@ public class EnchantListener implements Listener{
 				if(EnchantUtil.hasEnchant(armor, "Saturation")) {
 					if(EnchantUtil.getLevel(armor, "Saturation") <= EnchantAPI.getRegisteredEnchant("Saturation").getMaxLevel()) {
 						hasSaturation = true;
-						level = EnchantUtil.getLevel(armor, "Saturation");
+						level = Math.max(EnchantUtil.getLevel(armor, "Saturation"), level);
 					}
 				}
 			}

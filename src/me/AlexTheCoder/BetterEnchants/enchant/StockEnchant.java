@@ -1,5 +1,7 @@
 package me.AlexTheCoder.BetterEnchants.enchant;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 public enum StockEnchant {
 	
 	ANTITOXIN("Antitoxin", "_HELMET _CHESTPLATE _LEGGINGS _BOOTS", "", "", 3, 10),
@@ -55,8 +57,74 @@ public enum StockEnchant {
 		return this.maxLevel;
 	}
 	
-	public int getBaseXpCost() {
+	public int getDefaultBaseXpCost() {
 		return this.baseCost;
+	}
+	
+	public static ConcurrentHashMap<String, Object> getDefaultMapping(StockEnchant se) {
+		ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<String, Object>();
+		
+		map.put("BaseXpLevelCost", se.getDefaultBaseXpCost());
+		
+		switch (se) {
+		case ANTITOXIN:
+			map.put("ReductionMult", ((Double).10));
+			break;
+		case BLAZING_TOUCH:
+			break;
+		case CRANIAL_STRIKE:
+			map.put("DurationMult", ((Integer)1));
+			map.put("ProbabilityMult", ((Double)2.5));
+			break;
+		case DECAPITATION:
+			map.put("ProbabilityMult", ((Double)25.0));
+			break;
+		case FROSTBITE:
+			map.put("LevelMult", ((Integer)1));
+			map.put("Duration", ((Integer)5));
+			break;
+		case HIGHLANDER:
+			map.put("DisableInCombat", ((Boolean)true));
+			break;
+		case INFUSION:
+			map.put("LevelMult", ((Integer)1));
+			break;
+		case LIFESTEAL:
+			map.put("ProbabilityMult", ((Double)2.5));
+			map.put("DamageMult", ((Double).10));
+			break;
+		case MEDITATION:
+			map.put("DisableInCombat", ((Boolean)true));
+			break;
+		case MULTISHOT:
+			break;
+		case PARALYZE:
+			map.put("ProbabilityMult", ((Double)2.5));
+			map.put("DurationBoost", ((Integer)1));
+			break;
+		case POISON:
+			map.put("BaseDuration", ((Integer)5));
+			break;
+		case SATURATION:
+			break;
+		case SHELLSHOCK:
+			map.put("ProbabilityMult", ((Double)2.5));
+			map.put("DamageMult", ((Double)2.0));
+			break;
+		case STAGGERING_BLOW:
+			map.put("ProbabilityMult", ((Double)2.5));
+			map.put("Duration", ((Integer)5));
+			break;
+		case WITHER_ASPECT:
+			map.put("ProbabilityMult", ((Double)2.5));
+			map.put("EffectLevel", ((Integer)1));
+			map.put("DurationBoost", ((Integer)1));
+			break;
+		default:
+			break;
+		}
+		
+		return map;
 	}
 
 }

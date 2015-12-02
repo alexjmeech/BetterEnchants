@@ -1,6 +1,7 @@
 package me.AlexTheCoder.BetterEnchants.enchant;
 
 import me.AlexTheCoder.BetterEnchants.API.EnchantAPI;
+import me.AlexTheCoder.BetterEnchants.config.HandleActive;
 import me.AlexTheCoder.BetterEnchants.util.EnchantUtil;
 
 import org.bukkit.entity.LivingEntity;
@@ -11,7 +12,12 @@ import org.bukkit.potion.PotionEffectType;
 public class PoisonHandler {
 	
 	public PoisonHandler(LivingEntity damaged, int level) {
-		int time = 5 * 20;
+		if (getValue() == null)
+			return;
+		if (AntitoxinHandler.getValue() == null)
+			return;
+		
+		int time = getValue() * 20;
 		int amplifier = level - 1;
 		
 		if(level > 2) {
@@ -30,6 +36,10 @@ public class PoisonHandler {
 		}else{
 			damaged.addPotionEffect(new PotionEffect(PotionEffectType.POISON, time, amplifier));
 		}
+	}
+	
+	private Integer getValue() {
+		return HandleActive.getInstance().getInteger(StockEnchant.POISON, "BaseDuration");
 	}
 
 }

@@ -7,24 +7,28 @@ import org.bukkit.potion.PotionEffectType;
 
 public enum StockArmorBuff {
 	
-	HIGHLANDER(EnchantAPI.getRegisteredEnchant("Highlander"), 1, PotionEffectType.SPEED, true),
-	MEDITATION(EnchantAPI.getRegisteredEnchant("Meditation"), 1, PotionEffectType.REGENERATION, true)
+	HIGHLANDER(EnchantAPI.getRegisteredEnchant("Highlander"), StockEnchant.HIGHLANDER, 1, PotionEffectType.SPEED),
+	MEDITATION(EnchantAPI.getRegisteredEnchant("Meditation"), StockEnchant.MEDITATION, 1, PotionEffectType.REGENERATION)
 	;
 	
 	private CustomEnchant enchant;
+	private StockEnchant stock;
 	private int piecesNeeded;
 	private PotionEffectType effect;
-	private boolean disable;
 	
-	private StockArmorBuff(CustomEnchant enchant, int piecesNeeded, PotionEffectType effect, boolean disableInCombat) {
+	private StockArmorBuff(CustomEnchant enchant, StockEnchant stock, int piecesNeeded, PotionEffectType effect) {
 		this.enchant = enchant;
+		this.stock = stock;
 		this.piecesNeeded = piecesNeeded;
 		this.effect = effect;
-		this.disable = disableInCombat;
 	}
 	
 	public CustomEnchant getEnchant() {
 		return this.enchant;
+	}
+	
+	public StockEnchant getStock() {
+		return this.stock;
 	}
 	
 	public int getPiecesNeeded() {
@@ -33,10 +37,6 @@ public enum StockArmorBuff {
 	
 	public PotionEffectType getEffect() {
 		return this.effect;
-	}
-	
-	public boolean disableInCombat() {
-		return this.disable;
 	}
 
 }

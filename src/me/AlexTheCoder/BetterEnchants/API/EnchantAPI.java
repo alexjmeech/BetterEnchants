@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
 import me.AlexTheCoder.BetterEnchants.Main;
+import me.AlexTheCoder.BetterEnchants.config.HandleActive;
 import me.AlexTheCoder.BetterEnchants.enchant.StockArmorBuff;
 import me.AlexTheCoder.BetterEnchants.enchant.StockEnchant;
 
@@ -15,11 +16,23 @@ public class EnchantAPI {
 	public static void initialize(Main plugin) {
 		registeredEnchants = new ConcurrentHashMap<CustomEnchant, EnchantType>();
 		for(StockEnchant e : StockEnchant.values()) {
-			registeredEnchants.put(new CustomEnchant(e.getName(), e.getMaxLevel(), e.getEnchantableItems(), e.getVanillaConflicts(), e.getBetterConflicts(), e.getBaseXpCost()), EnchantType.STOCK);
+			if (!HandleActive.getInstance().isEnabled(e))
+				continue;
+			if (HandleActive.getInstance().getInteger(e, "BaseXpLevelCost") == null)
+				continue;
+			
+			registeredEnchants.put(new CustomEnchant(e.getName(), e.getMaxLevel(), e.getEnchantableItems(), e.getVanillaConflicts(), e.getBetterConflicts(), HandleActive.getInstance().getInteger(e, "BaseXpLevelCost")), EnchantType.STOCK);
 		}
 		registeredArmorBuffs = new ConcurrentHashMap<CustomArmorBuff, EnchantType>();
 		for(StockArmorBuff e : StockArmorBuff.values()) {
-			registeredArmorBuffs.put(new CustomArmorBuff(e.getEnchant(), e.getPiecesNeeded(), e.getEffect(), e.disableInCombat()), EnchantType.STOCK);
+			if (!HandleActive.getInstance().isEnabled(e.getStock()))
+				continue;
+			if (HandleActive.getInstance().getBoolean(e.getStock(), "DisableInCombat") == null) {
+				registeredEnchants.remove(e.getEnchant());
+				continue;
+			}
+			
+			registeredArmorBuffs.put(new CustomArmorBuff(e.getEnchant(), e.getPiecesNeeded(), e.getEffect(), HandleActive.getInstance().getBoolean(e.getStock(), "DisableInCombat")), EnchantType.STOCK);
 		}
 	}
 	

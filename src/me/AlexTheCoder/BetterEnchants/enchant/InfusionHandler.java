@@ -6,6 +6,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import me.AlexTheCoder.BetterEnchants.API.EnchantAPI;
+import me.AlexTheCoder.BetterEnchants.config.HandleActive;
 import me.AlexTheCoder.BetterEnchants.util.BlockUtil;
 import me.AlexTheCoder.BetterEnchants.util.EnchantUtil;
 import me.AlexTheCoder.BetterEnchants.util.MiscUtil;
@@ -28,12 +29,16 @@ public class InfusionHandler {
 		if (p.getGameMode().equals(GameMode.CREATIVE)) {
 			return;
 		}
+		if (getValue() == null) {
+			fail(p, i, e.getBlock());
+			return;
+		}
 		if(p.isSneaking()) return;
 		if ((level == -1) || (level > EnchantAPI.getRegisteredEnchant("Infusion").getMaxLevel())) {
 			return;
 		}
 		
-		List<Block> blocks = BlockUtil.getSquare(e.getBlock(), loggedBlockFaces.get(p.getUniqueId()), level);
+		List<Block> blocks = BlockUtil.getSquare(e.getBlock(), loggedBlockFaces.get(p.getUniqueId()), (level * getValue()));
 		Material oldMaterial = e.getBlock().getType();
 		
 		if(blocks.isEmpty()) {
@@ -82,6 +87,15 @@ public class InfusionHandler {
 		if(one == Material.AIR) return true;
 		if(two == Material.AIR) return true;
 		return one.ordinal() == two.ordinal();
+	}
+	
+	private Integer getValue() {
+		return HandleActive.getInstance().getInteger(StockEnchant.INFUSION, "LevelMult");
+	}
+	
+	private void fail(Player p, ItemStack item, Block b) {
+		handleNormalFunctions(p, item, b);
+		b.breakNaturally();
 	}
 	
 	public static void updateSavedBlockFace(Player p, BlockFace b) {
