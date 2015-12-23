@@ -1,5 +1,7 @@
 package me.AlexTheCoder.BetterEnchants.enchant;
 
+import me.AlexTheCoder.BetterEnchants.Main;
+
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -52,7 +54,7 @@ public class InfusionHandler {
 		}else{
 			for(Block b : blocks) {
 				if(b != null) {
-					if (!WGBukkit.getPlugin().canBuild(p, b))
+					if (Main.worldGuard && !WGBukkit.getPlugin().canBuild(p, b))
 						continue;
 					
 					if(!b.getType().equals(Material.AIR) && !b.getType().equals(Material.BEDROCK) && !b.getType().equals(Material.STATIONARY_LAVA) && !b.getType().equals(Material.STATIONARY_WATER) && !b.getType().equals(Material.WATER) && !b.getType().equals(Material.LAVA) && areSame(oldMaterial, b.getType())) {
