@@ -5,6 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import me.AlexTheCoder.BetterEnchants.Main;
 import me.AlexTheCoder.BetterEnchants.API.CustomEnchant;
 import me.AlexTheCoder.BetterEnchants.API.EnchantAPI;
+import me.AlexTheCoder.BetterEnchants.API.EnchantActivateEvent;
 import me.AlexTheCoder.BetterEnchants.enchant.AntitoxinHandler;
 import me.AlexTheCoder.BetterEnchants.enchant.BlazingTouchHandler;
 import me.AlexTheCoder.BetterEnchants.enchant.CranialStrikeHandler;
@@ -56,7 +57,10 @@ public class EnchantListener implements Listener{
 					}
 				}
 				if(hasAntitoxin) {
-					new AntitoxinHandler(p, e, EnchantUtil.getHighestLevelofArmorEnchant(p.getInventory().getArmorContents(), EnchantAPI.getRegisteredEnchant("Antitoxin")));
+					EnchantActivateEvent ac = new EnchantActivateEvent(entity, null, true, EnchantAPI.getRegisteredEnchant("Antitoxin"));
+					Bukkit.getPluginManager().callEvent(ac);
+					if (!ac.isCancelled())
+						new AntitoxinHandler(p, e, EnchantUtil.getHighestLevelofArmorEnchant(p.getInventory().getArmorContents(), EnchantAPI.getRegisteredEnchant("Antitoxin")));
 				}
 			}
 		}
@@ -72,14 +76,23 @@ public class EnchantListener implements Listener{
 			for(CustomEnchant enchant : EnchantUtil.getEnchants(i)) {
 				if(enchant.getName().equalsIgnoreCase("Blazing Touch") && (EnchantUtil.getLevel(i, "Blazing Touch") > 0)) {
 					if(EnchantUtil.hasEnchant(i, EnchantAPI.getRegisteredEnchant("Infusion"))) {
-						new InfusionHandler(p, e, EnchantUtil.getLevel(i, "Infusion"), i, true);
+						EnchantActivateEvent ac = new EnchantActivateEvent(p, null, false, EnchantAPI.getRegisteredEnchant("Infusion"));
+						Bukkit.getPluginManager().callEvent(ac);
+						if (!ac.isCancelled())
+							new InfusionHandler(p, e, EnchantUtil.getLevel(i, "Infusion"), i, true);
 					}else{
-						new BlazingTouchHandler(p, b, EnchantUtil.getLevel(i, "Blazing Touch"), i);
+						EnchantActivateEvent ac = new EnchantActivateEvent(p, null, false, EnchantAPI.getRegisteredEnchant("Blazing Touch"));
+						Bukkit.getPluginManager().callEvent(ac);
+						if (!ac.isCancelled())
+							new BlazingTouchHandler(p, b, EnchantUtil.getLevel(i, "Blazing Touch"), i);
 					}
 					return;
 				}
 				if(enchant.getName().equalsIgnoreCase("Infusion") && (EnchantUtil.getLevel(i, "Infusion") > 0)) {
-					new InfusionHandler(p, e, EnchantUtil.getLevel(i, "Infusion"), i, EnchantUtil.hasEnchant(i, "Blazing Touch"));
+					EnchantActivateEvent ac = new EnchantActivateEvent(p, null, false, EnchantAPI.getRegisteredEnchant("Infusion"));
+					Bukkit.getPluginManager().callEvent(ac);
+					if (!ac.isCancelled())
+						new InfusionHandler(p, e, EnchantUtil.getLevel(i, "Infusion"), i, EnchantUtil.hasEnchant(i, "Blazing Touch"));
 				}
 			}
 		}
@@ -93,22 +106,37 @@ public class EnchantListener implements Listener{
 				ItemStack i = p.getItemInHand();
 				for(CustomEnchant enchant : EnchantUtil.getEnchants(i)) {
 					if(enchant.getName().equalsIgnoreCase("Cranial Strike") && (EnchantUtil.getLevel(i, "Cranial Strike") > 0)) {
-						new CranialStrikeHandler(p, (LivingEntity)event.getEntity(), EnchantUtil.getLevel(i, "Cranial Strike"));
+						EnchantActivateEvent ac = new EnchantActivateEvent(p, (LivingEntity)event.getEntity(), true, EnchantAPI.getRegisteredEnchant("Cranial Strike"));
+						Bukkit.getPluginManager().callEvent(ac);
+						if (!ac.isCancelled())
+							new CranialStrikeHandler(p, (LivingEntity)event.getEntity(), EnchantUtil.getLevel(i, "Cranial Strike"));
 					}
 					/*if(enchant.getName().equalsIgnoreCase("Infected Blade") && (EnchantUtil.getLevel(i, "Infected Blade") > 0)) {
 						new InfectedBladeHandler(p, (LivingEntity)event.getEntity(), EnchantUtil.getLevel(i, "Infected Blade"));
 					}*/
 					if(enchant.getName().equalsIgnoreCase("Lifesteal") && (EnchantUtil.getLevel(i, "Lifesteal") > 0)) {
-						new LifestealHandler(p, EnchantUtil.getLevel(i, "Lifesteal"), event.getDamage());
+						EnchantActivateEvent ac = new EnchantActivateEvent(p, (LivingEntity)event.getEntity(), true, EnchantAPI.getRegisteredEnchant("Lifesteal"));
+						Bukkit.getPluginManager().callEvent(ac);
+						if (!ac.isCancelled())
+							new LifestealHandler(p, EnchantUtil.getLevel(i, "Lifesteal"), event.getDamage());
 					}
 					if(enchant.getName().equalsIgnoreCase("Paralyze") && (EnchantUtil.getLevel(i, "Paralyze") > 0)) {
-						new ParalyzeHandler(p, EnchantUtil.getLevel(i, "Paralyze"), (LivingEntity)event.getEntity());
+						EnchantActivateEvent ac = new EnchantActivateEvent(p, (LivingEntity)event.getEntity(), true, EnchantAPI.getRegisteredEnchant("Paralyze"));
+						Bukkit.getPluginManager().callEvent(ac);
+						if (!ac.isCancelled())
+							new ParalyzeHandler(p, EnchantUtil.getLevel(i, "Paralyze"), (LivingEntity)event.getEntity());
 					}
 					if(enchant.getName().equalsIgnoreCase("Staggering Blow") && (EnchantUtil.getLevel(i, "Staggering Blow") > 0)) {
-						new StaggeringBlowHandler(p, EnchantUtil.getLevel(i, "Staggering Blow"), (LivingEntity)event.getEntity());
+						EnchantActivateEvent ac = new EnchantActivateEvent(p, (LivingEntity)event.getEntity(), true, EnchantAPI.getRegisteredEnchant("Staggering Blow"));
+						Bukkit.getPluginManager().callEvent(ac);
+						if (!ac.isCancelled())
+							new StaggeringBlowHandler(p, EnchantUtil.getLevel(i, "Staggering Blow"), (LivingEntity)event.getEntity());
 					}
 					if(enchant.getName().equalsIgnoreCase("Wither Aspect") && (EnchantUtil.getLevel(i, "Wither Aspect") > 0)) {
-						new WitherAspectHandler(p, EnchantUtil.getLevel(i, "Wither Aspect"), (LivingEntity)event.getEntity());
+						EnchantActivateEvent ac = new EnchantActivateEvent(p, (LivingEntity)event.getEntity(), true, EnchantAPI.getRegisteredEnchant("Wither Aspect"));
+						Bukkit.getPluginManager().callEvent(ac);
+						if (!ac.isCancelled())
+							new WitherAspectHandler(p, EnchantUtil.getLevel(i, "Wither Aspect"), (LivingEntity)event.getEntity());
 					}
 				}
 			}
@@ -130,7 +158,10 @@ public class EnchantListener implements Listener{
 				if(armor == null) continue;
 				if(armor.getType() == Material.AIR) continue;
 				if(EnchantUtil.hasEnchant(armor, "Shellshock")) {
-					new ShellshockHandler(p, (LivingEntity)event.getDamager(), EnchantUtil.getLevel(armor, "Shellshock"));
+					EnchantActivateEvent ac = new EnchantActivateEvent(p, (LivingEntity)event.getDamager(), true, EnchantAPI.getRegisteredEnchant("Shellshock"));
+					Bukkit.getPluginManager().callEvent(ac);
+					if (!ac.isCancelled())
+						new ShellshockHandler(p, (LivingEntity)event.getDamager(), EnchantUtil.getLevel(armor, "Shellshock"));
 				}
 			}
 		}
@@ -147,7 +178,10 @@ public class EnchantListener implements Listener{
 				ItemStack i = p.getItemInHand();
 				for(CustomEnchant enchant : EnchantUtil.getEnchants(i)) {
 					if(enchant.getName().equalsIgnoreCase("Decapitation") && (EnchantUtil.getLevel(i, "Decapitation") > 0)) {
-						new DecapitationHandler(p, dead, e, EnchantUtil.getLevel(i, "Decapitation"));
+						EnchantActivateEvent ac = new EnchantActivateEvent(p, null, false, EnchantAPI.getRegisteredEnchant("Decapitation"));
+						Bukkit.getPluginManager().callEvent(ac);
+						if (!ac.isCancelled())
+							new DecapitationHandler(p, dead, e, EnchantUtil.getLevel(i, "Decapitation"));
 					}
 				}
 			}
@@ -163,9 +197,12 @@ public class EnchantListener implements Listener{
 				if(enchant.getName().equalsIgnoreCase("Frostbite")
 						&& (EnchantUtil.getLevel(i, "Frostbite") > 0)
 						&& (EnchantUtil.getLevel(i, "Frostbite") <= EnchantAPI.getRegisteredEnchant("Frostbite").getMaxLevel())) {
-					frostbite.put(event.getProjectile().getEntityId(), EnchantUtil.getLevel(i, "Frostbite"));
+					EnchantActivateEvent ac = new EnchantActivateEvent(event.getEntity(), null, true, EnchantAPI.getRegisteredEnchant("Frostbite"));
+					Bukkit.getPluginManager().callEvent(ac);
+					if (!ac.isCancelled())
+						frostbite.put(event.getProjectile().getEntityId(), EnchantUtil.getLevel(i, "Frostbite"));
 				}
-				if(enchant.getName().equalsIgnoreCase("Sharpshooter")
+				/*if(enchant.getName().equalsIgnoreCase("Sharpshooter")
 						&& (EnchantUtil.getLevel(i, "Sharpshooter") > 0)
 						&& (EnchantUtil.getLevel(i, "Sharpshooter") <= EnchantAPI.getRegisteredEnchant("Sharpshooter").getMaxLevel())) {
 					if(event.getEntity() instanceof Player) {
@@ -173,20 +210,29 @@ public class EnchantListener implements Listener{
 						Arrow pro = (Arrow)event.getProjectile();
 						pro.setVelocity(p.getEyeLocation().getDirection().normalize().multiply(event.getForce() * (1 + EnchantUtil.getLevel(i, "Sharpshooter"))));
 					}
-				}
+				}*/
 				if(enchant.getName().equalsIgnoreCase("Multishot")
 						&& (EnchantUtil.getLevel(i, "Multishot") > 0)
 						&& (EnchantUtil.getLevel(i, "Multishot") <= EnchantAPI.getRegisteredEnchant("Multishot").getMaxLevel())) {
 					if(event.getEntity() instanceof Player) {
-						new MultishotHandler((Player)event.getEntity(), event, EnchantUtil.getLevel(i, "Multishot"));
+						EnchantActivateEvent ac = new EnchantActivateEvent(event.getEntity(), null, true, EnchantAPI.getRegisteredEnchant("Multishot"));
+						Bukkit.getPluginManager().callEvent(ac);
+						if (!ac.isCancelled())
+							new MultishotHandler((Player)event.getEntity(), event, EnchantUtil.getLevel(i, "Multishot"));
 					}else{
-						new MultishotHandler(event, EnchantUtil.getLevel(i, "Multishot"));
+						EnchantActivateEvent ac = new EnchantActivateEvent(event.getEntity(), null, true, EnchantAPI.getRegisteredEnchant("Multishot"));
+						Bukkit.getPluginManager().callEvent(ac);
+						if (!ac.isCancelled())
+							new MultishotHandler(event, EnchantUtil.getLevel(i, "Multishot"));
 					}
 				}
 				if(enchant.getName().equalsIgnoreCase("Poison")
 						&& (EnchantUtil.getLevel(i, "Poison") > 0)
 						&& (EnchantUtil.getLevel(i, "Poison") <= EnchantAPI.getRegisteredEnchant("Poison").getMaxLevel())) {
-					poison.put(event.getProjectile().getEntityId(), EnchantUtil.getLevel(i, "Poison"));
+					EnchantActivateEvent ac = new EnchantActivateEvent(event.getEntity(), null, true, EnchantAPI.getRegisteredEnchant("Poison"));
+					Bukkit.getPluginManager().callEvent(ac);
+					if (!ac.isCancelled())
+						poison.put(event.getProjectile().getEntityId(), EnchantUtil.getLevel(i, "Poison"));
 				}
 			}
 		}
@@ -209,8 +255,13 @@ public class EnchantListener implements Listener{
 				}
 			}
 			if(hasSaturation) {
-				int deduct = event.getFoodLevel() / (1 + level);
-				event.setFoodLevel(event.getFoodLevel() + deduct);
+				EnchantActivateEvent ac = new EnchantActivateEvent(event.getEntity(), null, false, EnchantAPI.getRegisteredEnchant("Saturation"));
+				Bukkit.getPluginManager().callEvent(ac);
+				if (!ac.isCancelled())
+				{
+					int deduct = event.getFoodLevel() / (1 + level);
+					event.setFoodLevel(event.getFoodLevel() + deduct);
+				}
 			}
 		}
 	}

@@ -8,11 +8,13 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import me.AlexTheCoder.BetterEnchants.API.EnchantAPI;
+import me.AlexTheCoder.BetterEnchants.API.EnchantActivateEvent;
 import me.AlexTheCoder.BetterEnchants.config.HandleActive;
 import me.AlexTheCoder.BetterEnchants.util.BlockUtil;
 import me.AlexTheCoder.BetterEnchants.util.EnchantUtil;
 import me.AlexTheCoder.BetterEnchants.util.MiscUtil;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -45,7 +47,10 @@ public class InfusionHandler {
 		
 		if(blocks.isEmpty()) {
 			if(blazingTouch) {
-				new BlazingTouchHandler(p, e.getBlock(), EnchantUtil.getLevel(i, "Blazing Touch"), i);
+				EnchantActivateEvent ac = new EnchantActivateEvent(p, null, false, EnchantAPI.getRegisteredEnchant("Blazing Touch"));
+				Bukkit.getPluginManager().callEvent(ac);
+				if (!ac.isCancelled())
+					new BlazingTouchHandler(p, e.getBlock(), EnchantUtil.getLevel(i, "Blazing Touch"), i);
 				if((e.getBlock() == null) || (e.getBlock().getType() == Material.AIR))e.setCancelled(true);
 			} else {
 				handleNormalFunctions(p, i, e.getBlock());
