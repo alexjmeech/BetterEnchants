@@ -61,7 +61,7 @@ public class BlazingTouchHandler {
 		if (smeltable.getDropExperience() > 0) {
 			MiscUtil.dropExpNaturally(b.getLocation(), new Random().nextInt(smeltable.getDropExperience() + 1));
 		}
-		p.playSound(p.getLocation(), Sound.FIRE, 1.0F, 1.0F);
+		p.playSound(p.getLocation(), Sound.ITEM_FIRECHARGE_USE, 1.0F, 1.0F);
 	}
 
 }
