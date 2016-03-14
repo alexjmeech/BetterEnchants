@@ -52,7 +52,7 @@ public class CrystalEnchantMenu {
 		}
 		player.setLevel(player.getLevel() - 20);
 		player.closeInventory();
-		player.playSound(player.getLocation(), Sound.ANVIL_USE, 1.0F, 1.0F);
+		player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_USE, 1.0F, 1.0F);
 		for (Map.Entry<CustomEnchant, Integer> entry : this.enchants.entrySet()) {
 			EnchantUtil.addEnchant(player.getInventory().getItem(slot), (CustomEnchant)entry.getKey(), ((Integer)entry.getValue()).intValue(), player);
 		}
