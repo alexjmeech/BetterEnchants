@@ -66,6 +66,7 @@ public class EnchantListener implements Listener{
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
 	@EventHandler(ignoreCancelled = true)
 	public void onMine(BlockBreakEvent e) {		
 		if((e.getPlayer().getItemInHand() != null) && (e.getPlayer().getItemInHand().getType() != Material.AIR)) {
@@ -98,6 +99,7 @@ public class EnchantListener implements Listener{
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
 	@EventHandler(priority=EventPriority.NORMAL, ignoreCancelled = true)
 	public void onCombat(EntityDamageByEntityEvent event) {
 		if(event.getDamager() instanceof Player) {
@@ -167,6 +169,7 @@ public class EnchantListener implements Listener{
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onPlayerDie(PlayerDeathEvent e) {
 		Player dead = e.getEntity();
