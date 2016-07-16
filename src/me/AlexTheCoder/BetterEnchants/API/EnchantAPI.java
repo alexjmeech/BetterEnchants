@@ -1,98 +1,94 @@
-package me.AlexTheCoder.BetterEnchants.API;
+package me.alexthecoder.betterenchants.api;
 
 import java.util.Collection;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
 
-import me.AlexTheCoder.BetterEnchants.Main;
-import me.AlexTheCoder.BetterEnchants.config.HandleActive;
-import me.AlexTheCoder.BetterEnchants.enchant.StockArmorBuff;
-import me.AlexTheCoder.BetterEnchants.enchant.StockEnchant;
+import me.alexthecoder.betterenchants.BetterEnchants;
+import me.alexthecoder.betterenchants.enchant.StockEnchant;
 
-public class EnchantAPI {
+import org.bukkit.event.HandlerList;
+
+public class EnchantAPI
+{
+	private static HashMap<CustomEnchant, EnchantType> RegisteredEnchants;
+	private static HashMap<CustomArmorBuff, EnchantType> RegisteredArmorBuffs;
 	
-	private static ConcurrentHashMap<CustomEnchant, EnchantType> registeredEnchants;
-	private static ConcurrentHashMap<CustomArmorBuff, EnchantType> registeredArmorBuffs;
-	
-	public static void initialize(Main plugin) {
-		registeredEnchants = new ConcurrentHashMap<CustomEnchant, EnchantType>();
-		for(StockEnchant e : StockEnchant.values()) {
-			if (!HandleActive.getInstance().isEnabled(e))
-				continue;
-			if (HandleActive.getInstance().getInteger(e, "BaseXpLevelCost") == null)
-				continue;
-			
-			registeredEnchants.put(new CustomEnchant(e.getName(), e.getMaxLevel(), e.getEnchantableItems(), e.getVanillaConflicts(), e.getBetterConflicts(), HandleActive.getInstance().getInteger(e, "BaseXpLevelCost")), EnchantType.STOCK);
-		}
-		registeredArmorBuffs = new ConcurrentHashMap<CustomArmorBuff, EnchantType>();
-		for(StockArmorBuff e : StockArmorBuff.values()) {
-			if (!HandleActive.getInstance().isEnabled(e.getStock()))
-				continue;
-			if (HandleActive.getInstance().getBoolean(e.getStock(), "DisableInCombat") == null) {
-				registeredEnchants.remove(e.getEnchant());
-				continue;
-			}
-			
-			registeredArmorBuffs.put(new CustomArmorBuff(e.getEnchant(), e.getPiecesNeeded(), e.getEffect(), HandleActive.getInstance().getBoolean(e.getStock(), "DisableInCombat")), EnchantType.STOCK);
-		}
-	}
-	
-	public static void disable(Main plugin) {
-		registeredArmorBuffs.clear();
-		registeredArmorBuffs = null;
-		registeredEnchants.clear();
-		registeredEnchants = null;
-	}
-	
-	public static void registerCustomEnchant(CustomEnchant e) {
-		registeredEnchants.put(e, EnchantType.CUSTOM);
-	}
-	
-	public static void unregisterCustomEnchant(CustomEnchant e) {
-		if(registeredEnchants.containsKey(e)) {
-			if(registeredEnchants.get(e) != EnchantType.STOCK) {
-				registeredEnchants.remove(e);
+	public static void initialize(BetterEnchants plugin)
+	{
+		RegisteredEnchants = new HashMap<>();
+		RegisteredArmorBuffs = new HashMap<>();
+		for (StockEnchant e : StockEnchant.values())
+		{
+			CustomEnchant ce = e.getNew();
+			RegisteredEnchants.put(e.getNew(), EnchantType.STOCK);
+			if (e.isArmorBuff())
+			{
+				RegisteredArmorBuffs.put((CustomArmorBuff)ce, EnchantType.STOCK);
 			}
 		}
 	}
 	
-	public static CustomEnchant getRegisteredEnchant(String name) {
-		for(CustomEnchant e : registeredEnchants.keySet()) {
-			if(e.getName().replaceAll(" ", "_").equalsIgnoreCase(name.replaceAll(" ", "_"))) {
+	public static void disable(BetterEnchants plugin)
+	{
+		for (CustomEnchant e : RegisteredEnchants.keySet())
+		{
+			HandlerList.unregisterAll(e);
+		}
+		RegisteredArmorBuffs.clear();
+		RegisteredArmorBuffs = null;
+		RegisteredEnchants.clear();
+		RegisteredEnchants = null;
+	}
+	
+	public static void registerCustomEnchant(CustomEnchant e)
+	{
+		RegisteredEnchants.put(e, EnchantType.CUSTOM);
+		if (e instanceof CustomArmorBuff)
+		{
+			RegisteredArmorBuffs.put((CustomArmorBuff)e, EnchantType.CUSTOM);
+		}
+	}
+	
+	public static void unregisterCustomEnchant(CustomEnchant e)
+	{
+		if(RegisteredEnchants.containsKey(e))
+		{
+			if(RegisteredEnchants.get(e) != EnchantType.STOCK)
+			{
+				RegisteredEnchants.remove(e);
+				if (e instanceof CustomArmorBuff)
+				{
+					RegisteredArmorBuffs.remove((CustomArmorBuff)e);
+				}
+			}
+		}
+		HandlerList.unregisterAll(e);
+	}
+	
+	public static CustomEnchant getRegisteredEnchant(String name)
+	{
+		for (CustomEnchant e : RegisteredEnchants.keySet())
+		{
+			if (e.getName().replaceAll(" ", "_").equalsIgnoreCase(name.replaceAll(" ", "_")))
+			{
 				return e;
 			}
 		}
 		return null;
 	}
 	
-	public static Collection<CustomEnchant> getRegisteredEnchantments() {
-		return registeredEnchants.keySet();
+	public static Collection<CustomEnchant> getRegisteredEnchantments()
+	{
+		return RegisteredEnchants.keySet();
 	}
 	
-	public static void registerCustomArmorBuff(CustomArmorBuff e) {
-		registeredArmorBuffs.put(e, EnchantType.CUSTOM);
+	public static Collection<CustomArmorBuff> getRegisteredArmorBuffs()
+	{
+		return RegisteredArmorBuffs.keySet();
 	}
 	
-	public static void unregisterCustomArmorBuff(CustomArmorBuff e) {
-		if(registeredArmorBuffs.containsKey(e)) {
-			if(registeredArmorBuffs.get(e) != EnchantType.STOCK) {
-				registeredArmorBuffs.remove(e);
-			}
-		}
-	}
-	
-	public static CustomArmorBuff getRegisteredArmorBuff(CustomEnchant baseEnchant) {
-		for(CustomArmorBuff e : registeredArmorBuffs.keySet()) {
-			if(e.getEnchant() == baseEnchant) return e;
-		}
-		return null;
-	}
-	
-	public static Collection<CustomArmorBuff> getRegisteredArmorBuffs() {
-		return registeredArmorBuffs.keySet();
-	}
-	
-	private enum EnchantType {
+	private enum EnchantType
+	{
 		STOCK, CUSTOM;
 	}
-
 }

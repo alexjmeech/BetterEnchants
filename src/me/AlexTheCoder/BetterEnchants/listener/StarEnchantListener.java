@@ -1,14 +1,14 @@
-package me.AlexTheCoder.BetterEnchants.listener;
+package me.alexthecoder.betterenchants.listener;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import me.AlexTheCoder.BetterEnchants.API.CrystalAPI;
-import me.AlexTheCoder.BetterEnchants.API.CustomEnchant;
-import me.AlexTheCoder.BetterEnchants.API.EnchantAPI;
-import me.AlexTheCoder.BetterEnchants.util.CrystalUtil;
-import me.AlexTheCoder.BetterEnchants.util.MiscUtil;
+import me.alexthecoder.betterenchants.api.CrystalAPI;
+import me.alexthecoder.betterenchants.api.CustomEnchant;
+import me.alexthecoder.betterenchants.api.EnchantAPI;
+import me.alexthecoder.betterenchants.api.EnchantmentCategory;
+import me.alexthecoder.betterenchants.util.CrystalUtil;
+import me.alexthecoder.betterenchants.util.MiscUtil;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -18,52 +18,89 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class StarEnchantListener implements Listener {
-	
+import com.google.common.collect.Lists;
+
+public class StarEnchantListener implements Listener
+{
 	@EventHandler(ignoreCancelled = true)
-	public void onEnchantNetherStar(PlayerInteractEvent event) {
-		if(event.getClickedBlock() == null) return;
-		if(event.getClickedBlock().getType() != Material.ENCHANTMENT_TABLE) return;
-		if(event.getItem() == null) return;
+	public void onEnchantNetherStar(PlayerInteractEvent event)
+	{
+		if (event.getClickedBlock() == null)
+		{
+			return;
+		}
+		if (event.getClickedBlock().getType() != Material.ENCHANTMENT_TABLE)
+		{
+			return;
+		}
+		if (event.getItem() == null)
+		{
+			return;
+		}
 		ItemStack item = event.getItem();
 		Player player = event.getPlayer();
-		if(item.getType() != Material.NETHER_STAR) return;
-		if(CrystalUtil.isCrystal(item)) return;
-		if(player.getLevel() < 30) {
-			player.sendMessage(ChatColor.RED + "You require at least 30 levels to attempt an enchant!");
+		if (item.getType() != Material.NETHER_STAR)
+		{
+			return;
+		}
+		if (CrystalUtil.isCrystal(item))
+		{
+			return;
+		}
+		List<EnchantmentCategory> available = Lists.newArrayList();
+		for (EnchantmentCategory cat : EnchantmentCategory.values())
+		{
+			if (player.getLevel() >= cat.getXPCost())
+			{
+				available.add(cat);
+			}
+		}
+		if (available.isEmpty())
+		{
+			player.sendMessage(ChatColor.RED + "You do not have a high enough xp level to enchant that!");
 			event.setCancelled(true);
 			return;
 		}
-		List<CustomEnchant> enchants = new ArrayList<CustomEnchant>();
-		for(CustomEnchant e : EnchantAPI.getRegisteredEnchantments()) {
-			if(player.getLevel() >= e.getBaseXpLevel() * e.getMaxLevel()) enchants.add(e);
+		List<CustomEnchant> possible = Lists.newArrayList();
+		EnchantmentCategory category = available.get(new Random().nextInt(available.size()));
+		for (CustomEnchant ench : EnchantAPI.getRegisteredEnchantments())
+		{
+			if (ench.getCategory() == category)
+			{
+				possible.add(ench);
+			}
 		}
-		if(enchants.size() <= 0) {
-			event.getPlayer().sendMessage(ChatColor.RED + "There are no registered enchantments!");
+		if (possible.size() <= 0)
+		{
+			event.getPlayer().sendMessage(ChatColor.RED + "No enchantment was found!");
 			event.setCancelled(true);
 			return;
 		}
-		int i = new Random().nextInt(enchants.size() + 1);
-		CustomEnchant e = enchants.get(i);
+		CustomEnchant e = possible.get(new Random().nextInt(possible.size()));
 		int level = MiscUtil.getRandomInt(1, e.getMaxLevel());
-		int xpCost = e.getBaseXpLevel() * level;
+		int success = new Random().nextInt(101);
 		
-		if(item.getAmount() > 1) {
+		if (item.getAmount() > 1)
+		{
 			item.setAmount(item.getAmount() - 1);
-		}else{
+		}
+		else
+		{
 			player.getInventory().remove(item);
 		}
 		
-		ItemStack crystal = CrystalAPI.createCrystalItem(e, level);
+		ItemStack crystal = CrystalAPI.createCrystalItem(e, level, success);
 		
-		if(MiscUtil.hasOpenSlot(player.getInventory())) {
+		if (MiscUtil.hasOpenSlot(player.getInventory()))
+		{
 			player.getInventory().addItem(crystal);
 			player.updateInventory();
-		}else{
+		}
+		else
+		{
 			player.getWorld().dropItem(player.getLocation(), crystal);
 		}
-		player.setLevel(player.getLevel() - xpCost);
+		player.setLevel(player.getLevel() - category.getXPCost());
 		event.setCancelled(true);
 	}
-
 }

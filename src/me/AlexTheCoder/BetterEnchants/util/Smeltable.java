@@ -1,57 +1,67 @@
-package me.AlexTheCoder.BetterEnchants.util;
+package me.alexthecoder.betterenchants.util;
 
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
 
 import org.bukkit.Material;
 
-public enum Smeltable{
+public enum Smeltable
+{
 	//Pickaxe
 	COBBLESTONE(Material.COBBLESTONE, Material.STONE, 0, 0),
 	IRON_ORE(Material.IRON_ORE, Material.IRON_INGOT, 4, 0),
-	GOLD_INGOT(Material.GOLD_ORE, Material.GOLD_INGOT, 7, 0),
+	GOLD_ORE(Material.GOLD_ORE, Material.GOLD_INGOT, 7, 0),
 	NETHERRACK(Material.NETHERRACK, Material.NETHER_BRICK_ITEM, 2, 0),
 	;
   
-	private static ConcurrentHashMap<Material, Smeltable> materialToSmeltableMapping;
-	private Material from;
-	private Material to;
-	private int dropExperience;
-	private int data;
+	private static final HashMap<Material, Smeltable> MaterialToSmeltableMapping = new HashMap<>();
+	private Material _from;
+	private Material _to;
+	private int _dropExperience;
+	private int _data;
   
-	private Smeltable(Material from, Material to, int dropExperience, int data) {
-		this.from = from;
-		this.to = to;
-		this.dropExperience = dropExperience;
-		this.data = data;
+	private Smeltable(Material from, Material to, int dropExperience, int data)
+	{
+		_from = from;
+		_to = to;
+		_dropExperience = dropExperience;
+		_data = data;
 	}
   
-	public Material getFrom() {
-		return this.from;
+	public Material getFrom()
+	{
+		return _from;
 	}
   
-	public Material getTo() {
-		return this.to;
+	public Material getTo()
+	{
+		return _to;
 	}
 	
-	public short getToData() {
-		return (short) this.data;
+	public short getToData()
+	{
+		return (short) _data;
 	}
   
-	public int getDropExperience() {
-		return this.dropExperience;
+	public int getDropExperience()
+	{
+		return _dropExperience;
 	}
   
-	public static Smeltable fromMaterial(Material mat) {
-		if (materialToSmeltableMapping == null) {
+	public static Smeltable fromMaterial(Material mat)
+	{
+		if (MaterialToSmeltableMapping.isEmpty())
+		{
 			initMapping();
 		}
-		return (Smeltable)materialToSmeltableMapping.get(mat);
+		return MaterialToSmeltableMapping.get(mat);
 	}
 
-	private static void initMapping() {
-		materialToSmeltableMapping = new ConcurrentHashMap<Material, Smeltable>();
-		for (Smeltable s : values()) {
-			materialToSmeltableMapping.put(s.from, s);
+	private static void initMapping()
+	{
+		MaterialToSmeltableMapping.clear();
+		for (Smeltable s : values())
+		{
+			MaterialToSmeltableMapping.put(s._from, s);
 		}
 	}
 }

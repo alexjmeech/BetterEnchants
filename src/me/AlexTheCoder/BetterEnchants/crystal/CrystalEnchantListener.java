@@ -1,105 +1,82 @@
-package me.AlexTheCoder.BetterEnchants.crystal;
+package me.alexthecoder.betterenchants.crystal;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Random;
 
-import me.AlexTheCoder.BetterEnchants.API.CustomEnchant;
-import me.AlexTheCoder.BetterEnchants.config.HandleActive;
-import me.AlexTheCoder.BetterEnchants.util.CrystalUtil;
-import me.AlexTheCoder.BetterEnchants.util.EnchantUtil;
+import me.alexthecoder.betterenchants.api.CustomEnchant;
+import me.alexthecoder.betterenchants.util.CrystalUtil;
+import me.alexthecoder.betterenchants.util.EnchantUtil;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class CrystalEnchantListener implements Listener {
-	
-	private static ConcurrentHashMap<Player, CrystalEnchantMenu> instances = new ConcurrentHashMap<Player, CrystalEnchantMenu>();
-	
-	@EventHandler(ignoreCancelled = true)
-	public void onOpenCrystalGUI(PlayerInteractEvent event) {
-		if ((!event.getAction().equals(Action.RIGHT_CLICK_AIR)) && (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK))) {
+public class CrystalEnchantListener implements Listener
+{
+	@SuppressWarnings("deprecation")
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onPickItem(InventoryClickEvent event)
+	{
+		if(!(event.getWhoClicked() instanceof Player))
+			return;
+		
+		Player p = (Player)event.getWhoClicked();
+		
+		if (!CrystalUtil.isCrystal(event.getCursor()))
+		{
 			return;
 		}
-		Map<CustomEnchant, Integer> enchants = CrystalUtil.getEnchantsFromCrystal(event.getItem());
-		if (enchants == null) {
+		if (event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR)
+		{
 			return;
 		}
-		CrystalEnchantMenu menu = new CrystalEnchantMenu(enchants, event.getItem());
-		for (int i = 0; i < event.getPlayer().getInventory().getContents().length; i++) {
-			ItemStack itm = event.getPlayer().getInventory().getContents()[i];
-			if ((itm != null) && (!itm.getType().equals(Material.AIR)) && (!CrystalUtil.isCrystal(itm))) {
-				boolean skip = false;
-				for (CustomEnchant enchant : enchants.keySet()) {
-					if (!enchant.isEnchantable(itm.getType())) {
-						skip = true;
-						break;
-					}
-				}
-				if (!skip) {
-					for (CustomEnchant e : EnchantUtil.getEnchants(itm)) {
-						if (enchants.containsKey(e)) {
-							skip = true;
-							break;
-						}
-					}
-					if (!skip) {
-						for (Enchantment enchant : itm.getEnchantments().keySet()) {
-							for(CustomEnchant e : enchants.keySet()) {
-								if(e.willConflict(enchant)) skip = true;
-							}
-						}
-						
-						if(!skip) {
-							menu.inv.setItem(i, itm);
-							menu.addItem();
-						}
-					}
-				}
+		
+		Map<CustomEnchant, Integer> cEnchantments = CrystalUtil.getEnchantsFromCrystal(event.getCursor());
+		Double chance = CrystalUtil.getSuccessPercentage(event.getCursor());
+		for (CustomEnchant ce : cEnchantments.keySet())
+		{
+			if (!ce.isEnchantable(event.getCurrentItem().getType()))
+			{
+				p.sendMessage(ChatColor.RED + "That Crystal cannot be applied to that type of item!");
+				return;
 			}
-		}
-		if (menu.total == 0) {
-			event.getPlayer().sendMessage(ChatColor.RED + "You have no items in your inventory that can be enchanted with this crystal!");
-		} else if (event.getPlayer().getLevel() < HandleActive.getInstance().getCrystalXpLevelCost()) {
-			if (HandleActive.getInstance().getCrystalXpLevelCost() != 1)
-				event.getPlayer().sendMessage(ChatColor.RED + "You require " + HandleActive.getInstance().getCrystalXpLevelCost() + " levels to enchant an item with a crystal!");
-			else
-				event.getPlayer().sendMessage(ChatColor.RED + "You require " + HandleActive.getInstance().getCrystalXpLevelCost() + " level to enchant an item with a crystal!");
-		} else {
-			menu.show(event.getPlayer());
-			instances.put(event.getPlayer(), menu);
-		}
-	}
-	
-	@EventHandler(ignoreCancelled = true)
-	public void onPickItem(InventoryClickEvent event) {
-		if(event.getWhoClicked() instanceof Player) {
-			Player p = (Player)event.getWhoClicked();
-			if(!instances.containsKey(p)) return;
-			if(event.getInventory().getName().equals(instances.get(p).inv.getName())) {
-				if(!event.getClickedInventory().getName().equals(instances.get(p).inv.getName())) {
-					event.setCancelled(true);
+			if (EnchantUtil.getEnchants(event.getCurrentItem()).contains(ce))
+			{
+				p.sendMessage(ChatColor.RED + "That item already has that Enchantment!");
+				return;
+			}
+			for (CustomEnchant test : EnchantUtil.getEnchants(event.getCurrentItem()))
+			{
+				if (ce.willConflict(test))
+				{
+					p.sendMessage(ChatColor.RED + "That Crystal will conflict with that item's existing Enchantments!!");
 					return;
 				}
-				instances.get(p).applyEnchants(p, event.getSlot());
+			}
+			for (Enchantment test : event.getCurrentItem().getEnchantments().keySet())
+			{
+				if (ce.willConflict(test))
+				{
+					p.sendMessage(ChatColor.RED + "That Crystal will conflict with that item's existing Enchantments!!");
+					return;
+				}
 			}
 		}
-	}
-	
-	@EventHandler(ignoreCancelled = true)
-	public void onClose(InventoryCloseEvent event) {
-		if(event.getPlayer() instanceof Player) {
-			Player p = (Player)event.getPlayer();
-			instances.remove(p);
+		event.setCancelled(true);
+		event.setCursor(new ItemStack(Material.AIR));
+		if (new Random().nextDouble() <= chance)
+		{
+			for (CustomEnchant ce : cEnchantments.keySet())
+			{
+				EnchantUtil.addEnchant(event.getCurrentItem(), ce, cEnchantments.get(ce), p);
+			}
 		}
+		p.updateInventory();
 	}
-
 }

@@ -1,34 +1,33 @@
-package me.AlexTheCoder.BetterEnchants.API;
+package me.alexthecoder.betterenchants.api;
 
 import org.bukkit.potion.PotionEffectType;
 
-public class CustomArmorBuff {
+public abstract class CustomArmorBuff extends CustomEnchant
+{
+	private int _piecesNeeded;
+	private PotionEffectType _effect;
+	private boolean _disable;
 	
-	private CustomEnchant enchant;
-	private int piecesNeeded;
-	private PotionEffectType effect;
-	private boolean disable;
-	
-	public CustomArmorBuff(CustomEnchant enchant, int piecesNeeded, PotionEffectType effect, boolean disableInCombat) {
-		this.enchant = enchant;
-		this.piecesNeeded = piecesNeeded;
-		this.effect = effect;
-		this.disable = disableInCombat;
+	public CustomArmorBuff(String name, EnchantmentCategory category, int maxLevel, String enchantableItems, String vanillaConflicts, String betterConflicts, int piecesNeeded, PotionEffectType effect, boolean disableInCombat)
+	{
+		super(name, category, maxLevel, enchantableItems, vanillaConflicts, betterConflicts);
+		_piecesNeeded = piecesNeeded;
+		_effect = effect;
+		_disable = disableInCombat;
 	}
 	
-	public CustomEnchant getEnchant() {
-		return this.enchant;
+	public int getPiecesNeeded()
+	{
+		return _piecesNeeded;
 	}
 	
-	public int getPiecesNeeded() {
-		return this.piecesNeeded;
+	public PotionEffectType getEffect()
+	{
+		return _effect;
 	}
 	
-	public PotionEffectType getEffect() {
-		return this.effect;
-	}
-	
-	public boolean getDisableInCombat() {
-		return this.disable;
+	public boolean getDisableInCombat()
+	{
+		return _disable;
 	}
 }
