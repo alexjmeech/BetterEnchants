@@ -1,5 +1,0 @@
-name: BetterEnchants
-author: AlexTheCoder
-version: 3.0
-main: me.alexthecoder.betterenchants.BetterEnchants
-softdepend: [ProjectKorra, WorldGuard]
